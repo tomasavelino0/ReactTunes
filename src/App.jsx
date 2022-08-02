@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Login from './pages/Login';
 import Album from './pages/Album';
 import Search from './pages/Search';
@@ -11,16 +11,16 @@ import NotFound from './pages/NotFound';
 class App extends React.Component {
   render() {
     return (
-      <BrowserRouter>
+      <Switch>
         <Route exact path="/" component={ Login } />
         <Route path="/album/:id" component={ Album } />
         <Route path="/search" component={ Search } />
         <Route path="/favorites" component={ Favorites } />
         <Route path="/profile" component={ Profile } />
-        <Route path="/profile/edit" component={ ProfileEdit } />
+        <Route exect path="/profile/edit" component={ ProfileEdit } />
         <Route path="*" component={ NotFound } />
 
-      </BrowserRouter>
+      </Switch>
     );
   }
 }

@@ -3,13 +3,11 @@ import { Redirect } from 'react-router-dom';
 import { createUser } from '../services/userAPI';
 import Loading from '../Components/Loading';
 
-console.log(createUser({ name: 'Tomas' }));
-
 class login extends React.Component {
   constructor() {
     super();
     this.state = {
-      nameLogin: '',
+      name: '',
       btnLogin: true,
       statusLogin: 'UNDEFINED',
     };
@@ -25,9 +23,9 @@ class login extends React.Component {
   };
 
   enableButton = () => {
-    const { nameLogin } = this.state;
+    const { name } = this.state;
     const minCaracters = 3;
-    if (nameLogin.length >= minCaracters) {
+    if (name.length >= minCaracters) {
       this.setState({
         btnLogin: false,
       });
@@ -35,31 +33,32 @@ class login extends React.Component {
   }
 
   saveNameUser = async () => {
-    const { nameLogin } = this.state;
+    const { name } = this.state;
     this.setState({ statusLogin: 'LOADING' }, async () => {
-      const loginSucess = await createUser({ nameLogin });
+      const loginSucess = await createUser({ name });
       this.setState({ statusLogin: loginSucess });
     });
   };
 
   render() {
-    const { btnLogin, nameLogin, statusLogin } = this.state;
+    const { btnLogin, name, statusLogin } = this.state;
     return (
       <div data-testid="page-login">
         {statusLogin === 'UNDEFINED' ? (
           <div>
             <h1>Login</h1>
-            <label htmlFor="nameLogin">
+            <label htmlFor="name">
               Name:
 
               <input
-                value={ nameLogin }
+                value={ name }
                 data-testid="login-name-input"
                 type="text"
-                name="nameLogin"
+                name="name"
                 onChange={ this.onInputChange }
               />
             </label>
+
             <button
               onClick={ this.saveNameUser }
               disabled={ btnLogin }
