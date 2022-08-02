@@ -21,8 +21,8 @@ class Header extends React.Component {
         <header data-testid="header-component">
           <h2 data-testid="header-user-name">{name}</h2>
           {name ? (
-            <div className="header-conteiner">
-              <div className="header-nav">
+            <div>
+              <div>
                 <nav>
                   <Link data-testid="link-to-search" to="/search">
                     Search
