@@ -4,16 +4,57 @@ import Header from '../Components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../Components/MusicCard';
 import Loading from '../Components/Loading';
+import { addSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class Album extends React.Component {
   state = {
     loading: false,
     album: {},
     tracks: [],
+    favoriteSongs: [],
   };
 
   async componentDidMount() {
     this.getTracksAndAlbum();
+    this.loadFavoriteSongs();
+  }
+
+  loadFavoriteSongs = () => {
+    this.setState({ loading: true }, async () => {
+      const favoriteTracks = await getFavoriteSongs();
+      const favoriteTracksId = favoriteTracks.map((song) => song.trackId);
+      this.setState({ favoriteSongs: favoriteTracksId, loading: false });
+    });
+  };
+
+  handleFavoriteCheckbox = (e, musicObj) => {
+    const { favoriteSongs } = this.state;
+    const { target } = e;
+    const { name } = target;
+    if (target.checked) {
+      favoriteSongs.push(parseInt(name, 10));
+      this.setState({ loading: true }, async () => {
+        const response = await addSong(musicObj);
+        if (response === 'OK') {
+          this.setState({
+            loading: false,
+          });
+        }
+      });
+    } else {
+      favoriteSongs.splice(favoriteSongs.indexOf(parseInt(name, 10)), 1);
+      this.setState({ loading: true }, async () => {
+        const response = await removeSong(musicObj);
+        if (response === 'OK') {
+          this.setState({
+            loading: false,
+          });
+        }
+      });
+    }
+    this.setState({
+      favoriteSongs,
+    });
   }
 
   getTracksAndAlbum = () => {
@@ -32,7 +73,7 @@ class Album extends React.Component {
   }
 
   render() {
-    const { loading, album, tracks } = this.state;
+    const { loading, album, tracks, favoriteSongs } = this.state;
     const { collectionName, artworkUrl100, artistName } = album;
     return (
       <div data-testid="page-album">
@@ -58,7 +99,9 @@ class Album extends React.Component {
               {tracks.map((music) => (
                 <MusicCard
                   key={ music.trackId }
-                  music={ music.previewUrl }
+                  handleFavoriteCheckbox={ this.handleFavoriteCheckbox }
+                  favoriteSongs={ favoriteSongs }
+                  musicObj={ music }
                   trackName={ music.trackName }
                 />
               ))}

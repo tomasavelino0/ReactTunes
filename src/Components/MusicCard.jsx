@@ -3,23 +3,35 @@ import propTypes from 'prop-types';
 
 class MusicCard extends Component {
   render() {
-    const { music, trackName } = this.props;
+    const { musicObj, handleFavoriteCheckbox, favoriteSongs } = this.props;
+    const { trackName, previewUrl, trackId } = musicObj;
+
     return (
       <div>
         <div>
-          <p>{trackName}</p>
+          <h2>{trackName}</h2>
         </div>
         <div>
-          <audio data-testid="audio-component" src={ music } controls>
+          <audio data-testid="audio-component" src={ previewUrl } controls>
             <track kind="captions" />
             O seu navegador não suporta o elemento
             {' '}
             <code>audio</code>
             .
           </audio>
-        </div>
-        <div>
-          <input type="checkbox" />
+          <label htmlFor="favorites">
+            Favorita
+            <input
+              type="checkbox"
+              data-testid={ `checkbox-music-${trackId}` }
+              name={ trackId }
+              onChange={ (e) => {
+                handleFavoriteCheckbox(e, musicObj);
+              } }
+              checked={ favoriteSongs.includes(trackId) }
+
+            />
+          </label>
         </div>
       </div>
     );
@@ -27,8 +39,14 @@ class MusicCard extends Component {
 }
 
 MusicCard.propTypes = {
-  music: propTypes.string.isRequired,
-  trackName: propTypes.string.isRequired,
+
+  musicObj: propTypes.shape({
+    trackName: propTypes.string.isRequired,
+    trackId: propTypes.number.isRequired,
+    previewUrl: propTypes.string.isRequired,
+  }).isRequired,
+  handleFavoriteCheckbox: propTypes.func.isRequired,
+  favoriteSongs: propTypes.arrayOf(propTypes.number).isRequired,
 };
 
 export default MusicCard;
